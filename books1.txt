@@ -1,0 +1,144 @@
+Textbook
+MIL-002
+The Girl Who Played with Fire
+Larsen, S.
+2
+true
+null
+Book
+MIL-001
+The Girl with the Dragon Tattoo
+Larsen, S.
+2
+true
+null
+Book
+WOT-001
+The Eye of The World
+Jordan, R.
+14
+true
+null
+Book
+BOU-001
+The Bourne Identity
+Ludlum, R.
+14
+true
+null
+Book
+MOD-001
+Moby Dick
+Melville, H.
+14
+true
+null
+Textbook
+DBC-001
+Fundamentals of Database Systems
+Elmasri, R. & Navathe, S.
+2
+true
+null
+ISYS1057
+Book
+WIW-001
+The Wind In the Willows
+Grahame, K.
+14
+true
+null
+Book
+LTR-001
+The Fellowship of the Rings
+Tolkien, J. R. R.
+14
+true
+null
+Textbook
+WST-001
+HTTP: The Definitive Guide
+Gourley, D. & Totty, B.
+2
+true
+null
+COSC1285
+Book
+TGG-001
+The Great Gatsby
+Fitzgerald, F. S.
+14
+true
+null
+Textbook
+JAV-001
+Introduction to Java Programming
+Liang, D.
+2
+true
+null
+COSC1073 COSC1284 COSC2531 COSC1295
+Textbook
+AIN-001
+Artificial Intelligence - A Modern Approach.
+Russell, S. & Norvig, P.
+2
+true
+null
+COSC1127
+Book
+JAV-002
+Java for Dummies
+Burd, B.
+14
+true
+null
+Book
+WAP-001
+War and Peace
+Tolstoy, L.
+14
+true
+null
+Book
+VAM-002
+Interview with a Vampire
+Rice, A.
+14
+true
+null
+Book
+VAM-001
+Dracula
+Stoker, B
+14
+true
+null
+Textbook
+WIZ-002
+Harry Potter and the Deathly Hallows
+Larsen, S.
+2
+true
+null
+Book
+WIZ-001
+A Wizard of Earthsea
+Le-Guin, U. K.
+14
+true
+null
+Book
+CRU-001
+The Crucible
+Miller, A.
+14
+true
+null
+Book
+DIC-001
+A Tale of Two Cities
+Dickens, C.
+14
+true
+null

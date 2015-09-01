@@ -21,6 +21,7 @@ public class Book implements LibraryBook, Printable {
 			
 			
 	private String 	number, title, author;
+
 	private int 	loanPeriod;
 	private boolean availability;
 	private LibraryMember 	borrower;
@@ -55,6 +56,14 @@ public class Book implements LibraryBook, Printable {
 	public String getBookNumber() {
 		// TODO Auto-generated method stub
 		return number;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	
+	public String getAuthor() {
+		return author;
 	}
 
 	@Override

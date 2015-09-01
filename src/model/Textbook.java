@@ -27,6 +27,10 @@ public class Textbook extends Book {
 		this.courseCode = courseCode;
 	}
 
+	public String getCourseCode() {
+		return courseCode;
+	}
+
 	@Override
 	public void print() {
 		// TODO Auto-generated method stub

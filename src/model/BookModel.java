@@ -3,16 +3,20 @@ package model;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Map.Entry;
 
 public class BookModel {
 	static final String BOOK = "Book",
 			TEXTBOOK = "Textbook",
 			NULL = "null",
+			TRUE = "true",
+			FALSE = "false",
 			ITEM = "Item";
 	
 	private static BookModel singleton;
@@ -32,7 +36,7 @@ public class BookModel {
 		FileReader fread 	= null;
 		BufferedReader br	= null;
 		try{
-			fread = new FileReader("books.txt");
+			fread = new FileReader("books1.txt");
 			br = new BufferedReader(fread);
 			LibraryBook tb;
 			do {
@@ -83,7 +87,8 @@ public class BookModel {
 			try{ 
 				courseCode = block.remove(); 
 			} catch (Exception e){
-				//e.printStackTrace();
+				e.printStackTrace();
+				courseCode = null;
 			}
 			b = new Textbook(bookID, title, author, courseCode);
 		} else {
@@ -98,8 +103,65 @@ public class BookModel {
 	}
 	
 	public void save() {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter("books1.txt");
+			for (Map.Entry<String, LibraryBook> entry : bookMap.entrySet()) {
+				//transBooktoString(entry.getValue());
+				//System.out.printf("%s",transBooktoString(entry.getValue()));
+				writer.write(transBooktoString(entry.getValue()));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch(IOException e) {
+				//e.printStackTrace();
+			}
+		}
+	}
+	
+	private String transBooktoString (LibraryBook book) {
+		String bookObjString = new String();
+		String nl = System.lineSeparator();
+		String classTypeName, 
+				bookID, 
+				title,
+				author, 
+				loanPeriod, 
+				availability,
+				borrower,
+				courseCode = null;
 		
-	} 
+		boolean isTextbook = (book instanceof Textbook)? true:false;
+		
+		classTypeName = isTextbook ? TEXTBOOK:BOOK;
+		bookID 	= book.getBookNumber();
+		title 	= ((Book) book).getTitle();
+		author 	= ((Book) book).getAuthor();
+		loanPeriod = String.valueOf(book.getLoanPeriod());
+		availability = (book.isAvailable())? TRUE:FALSE;
+		borrower = book.getBorrowerID();
+		bookObjString = String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+					classTypeName, nl,
+					bookID, nl,
+					title, nl,
+					author, nl,
+					loanPeriod, nl,
+					availability, nl,
+					borrower, nl
+				);
+		
+		if(isTextbook) {
+			courseCode = ((Textbook)book).getCourseCode();
+		}
+		if(courseCode != null) {
+			bookObjString = String.format("%s%s%s",bookObjString,courseCode,nl);
+		}
+		return bookObjString;
+	}
 	
 	public void mapBorrower(Map<String, Member> memberList) {
 		

@@ -12,7 +12,7 @@ public class LibrarySystem implements LibraryModel {
 			NULL = "null",
 			ITEM = "Item";
 	static final int PAGE_ITEM_LIMIT = 3;
-	BookModel bookModel;
+	BookModel bookModel = BookModel.getSingleton();;
 	Map<String, LibraryBook> bookMap;
 	Map<String, Member> memberMap = new HashMap<String, Member>();
 	
@@ -76,7 +76,6 @@ public class LibrarySystem implements LibraryModel {
 	
 	@Override
 	public void loadAllBooks() {
-		bookModel = BookModel.getSingleton();
 		bookMap = bookModel.getBookMap();
 	}
 
@@ -89,7 +88,7 @@ public class LibrarySystem implements LibraryModel {
 	@Override
 	public void saveAllBooks() {
 		// TODO Auto-generated method stub
-
+		bookModel.save();
 	}
 
 	@Override
@@ -124,7 +123,6 @@ public class LibrarySystem implements LibraryModel {
 	        } catch (Exception e) {
 	        	//e.printStackTrace();
 	        }
-	        it.remove(); // avoids a ConcurrentModificationException
 	        count ++ ;
 	        i ++;
 	        if(i == PAGE_ITEM_LIMIT) {
