@@ -48,10 +48,15 @@ public class MemberModel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		// read in from file
 		while(readFlag) {
 			try{
 				// Read a member data from inputstream
+				// Structure for reading
+		        // __________________________________________________________
+		        // |String|String|String|Boolean or Double|ArrayList<String>|
+		        // ----------------------------------------------------------
+		        
 				sa[ID_INDEX] 	= oin.readUTF();
 				sa[TITLE_INDEX] = oin.readUTF();
 				sa[PHONENO_INDEX] = oin.readUTF();
@@ -64,7 +69,9 @@ public class MemberModel {
 							sa[PHONENO_INDEX]);
 					((Student)tm).setFinesOwing(oin.readDouble());
 				}
+				// Raw data map without relationship to book
 				memberMap.put(tm.getMemberID(), tm);
+				// Map for storing relation
 				entitledMap.put(tm.getMemberID(), (ArrayList<String>) oin.readObject());
 			} catch (EOFException e) {
 				Log.e(e.getMessage());
@@ -88,12 +95,22 @@ public class MemberModel {
 		return entitledMap;
 	}
 	
+	/** save
+	 *  To save members' information into a binary file
+	 * 
+	 */
 	public void save() {
         ObjectOutputStream oout = null;
         Member tm;
         ArrayList<String> booksBorrowed = new ArrayList<String>();
 		try {
 	        oout = new ObjectOutputStream(new FileOutputStream("members1.dat"));
+	        // Loop through memberMap and process each entry
+	        // Structure for writing
+	        // __________________________________________________________
+	        // |String|String|String|Boolean or Double|ArrayList<String>|
+	        // ----------------------------------------------------------
+	        
 	        for (Map.Entry<String, Member> entry : memberMap.entrySet()) {
 				tm = entry.getValue();
 				oout.writeUTF(tm.getMemberID());

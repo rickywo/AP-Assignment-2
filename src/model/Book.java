@@ -112,6 +112,15 @@ public class Book implements LibraryBook, Printable {
 		this.borrower = m;
 	}
 	
+	/* 
+	 * Prints in object in following format
+	 * Member Type: Staff
+	 * ID: STA-002
+	 * Name: William Raffe
+	 * Phone Number: 9455-6677
+	 * Item on loan: WOT-001 
+	 * Book Overdue: False
+	 */
 	@Override
 	public void print() {
 		String bookinfo = String.format (

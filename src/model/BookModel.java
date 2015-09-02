@@ -117,10 +117,14 @@ public class BookModel {
 		return borrowMap;
 	}
 	
+	/**
+	 * To save books info into a particular text file
+	 */
 	public void save() {
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter("books1.txt");
+			// Loop through objects in the map and write it into file
 			for (Map.Entry<String, LibraryBook> entry : bookMap.entrySet()) {
 				writer.write(transBooktoString(entry.getValue()));
 			}
@@ -135,6 +139,10 @@ public class BookModel {
 		}
 	}
 	
+	/**
+	 * @param book
+	 * @return object in readable string for printing
+	 */
 	private String transBooktoString (LibraryBook book) {
 		String bookObjString = new String();
 		String nl = System.lineSeparator();
@@ -173,9 +181,5 @@ public class BookModel {
 			bookObjString = String.format("%s%s%s",bookObjString,courseCode,nl);
 		}
 		return bookObjString;
-	}
-	
-	public void mapBorrower(Map<String, Member> memberList) {
-		
 	}
 }

@@ -35,23 +35,23 @@ public class LibrarySystem implements LibraryModel {
 		
 		int type; // 1 for Student, 2 for Staff
 		System.out.print("Please Chose a Type (1)Student (2)Staff: ");
-		type = getResponse(2);
+		type = scanInt(2);
 		id = String.format("%s-",(type == 1)?STU:STA);
 		System.out.printf("Enter 3 digits of member ID : %s", id);
-		id += (scan.nextLine()).trim();
+		id += scanString();
 		if (memberMap.containsKey(id)) {
 			System.out.println("Member is exist.");
 			hold();
 			return false;
 		}
 		System.out.print("Please enter a name: ");
-		name = (scan.nextLine()).trim();
+		name = scanString();
 		if(name.length() == 0) {
 			System.out.println("Empty String is entered.");
 			return false;
 		}
 		System.out.print("Please enter a contact phone number: ");
-		phone = (scan.nextLine()).trim();
+		phone = scanString();
 		if(phone.length() == 0) {
 			System.out.println("Empty String is entered.");
 			return false;
@@ -159,7 +159,7 @@ public class LibrarySystem implements LibraryModel {
 	        	try {
 					tb.borrowBook(tm);
 				} catch (BookException e) {
-					Log.e(e.getMessage());
+					//Log.e(e.getMessage());
 				}
 	        } catch (Exception e) {
 	        	Log.e(e.getMessage());
@@ -195,7 +195,7 @@ public class LibrarySystem implements LibraryModel {
 		scan.nextLine();
 	}
 	
-	private int getResponse(int op) {
+	private int scanInt(int op) {
 		int num = -1;
 		// validate input
 		do {
@@ -211,6 +211,35 @@ public class LibrarySystem implements LibraryModel {
 		return num;
 	}
 	
+	private String scanString() {
+		boolean flag = true;
+		String result = "";
+		// validate input
+		do {
+			String s;
+			try {
+				result = scan.nextLine();
+				result = result.trim();
+				if(result.length() == 0) {
+					Log.w("Please re-enter a valid string:");
+				} else {
+					flag = false;
+				}
+			} catch (Exception e) {
+				Log.e(e.getMessage());
+				continue;
+			}
+		} while (flag);
+		return result;
+	}
+	
+	/**
+	 * @param mp
+	 * To print objects in Map structure
+	 * T must has implemented Printable interface
+	 * Print PAGE_ITEM_LIMIT items each time
+	 * then waiting key press to continue printing
+	 */
 	public <T> void printMap(Map<String, T> mp) {
 		int i = 0, count = 0;
 	    
