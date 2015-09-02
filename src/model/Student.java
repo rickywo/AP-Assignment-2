@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Student extends Member {
 	static final String
-			MEMBERTYPE = "Member Type:",
+			MEMBERTYPE = "Member Type",
 			STUDENT = "Student",
 			FINESOWING = "Fine Owning";
 	static final int BOOKLIMIT = 2,
@@ -14,13 +14,11 @@ public class Student extends Member {
 
 	public Student(String id, String name, String phoneNumber) {
 		super(id, name, phoneNumber);
-		// TODO Auto-generated constructor stub
 		finesOwing = 0;
 	}
 
 	@Override
 	public void borrowBook(LibraryBook b) throws LoanException {
-		// TODO Auto-generated method stub
 		ArrayList<LibraryBook> booklist;
 		booklist = this.getBooklist();
 		
@@ -41,7 +39,6 @@ public class Student extends Member {
 
 	@Override
 	public void returnBook(String bookNumber, int days) throws LoanException {
-		// TODO Auto-generated method stub
 		ArrayList<LibraryBook> booklist;
 		LibraryBook b = getBookfromBorrowed(bookNumber);
 		booklist = this.getBooklist();
@@ -72,10 +69,9 @@ public class Student extends Member {
 
 	@Override
 	public void print() {
-		// TODO Auto-generated method stub
 		System.out.printf("%s: %s\n", MEMBERTYPE, STUDENT);
 		super.print();
-		System.out.printf("%s: $%.1f\n",FINESOWING);
+		System.out.printf("%s: $%.1f\n",FINESOWING, finesOwing);
 		
 	}
 

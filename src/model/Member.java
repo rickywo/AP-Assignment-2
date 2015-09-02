@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Ricky Wu
  *
  */
-public abstract class Member implements LibraryMember {
+public abstract class Member implements LibraryMember, Printable {
 	static final String NAME = "Name",
 			ID = "ID",
 			PHONENUMBER ="Phone Number",
@@ -57,7 +57,6 @@ public abstract class Member implements LibraryMember {
 
 	@Override
 	public String getMemberID() {
-		// TODO Auto-generated method stub
 		return id;
 	}
 	
@@ -73,7 +72,6 @@ public abstract class Member implements LibraryMember {
 
 	@Override
 	public ArrayList<LibraryBook> getBorrowedBooks() {
-		// TODO Auto-generated method stub
 		return booklist;
 	}
 
@@ -85,20 +83,20 @@ public abstract class Member implements LibraryMember {
 	 */
 	@Override
 	public void print() {
-		// TODO Printing out member information
-		// Personal info
 		String member = String.format("%s: %s\n%s: %s\n%s: %s",
 				ID, id,
 				NAME, name,
 				PHONENUMBER, phoneNumber);
+		String books = "";
 		
 		System.out.printf("%s\n", member);
 		// Printing out booklist
-		System.out.printf("%s\n", ITEMS);
+		System.out.printf("%s: ", ITEMS);
 		
 		for(LibraryBook book: booklist) {
-			book.print();
+			books += (book.getBookNumber()+" ");
 		}
+		System.out.printf("%s\n", books);
 	}
 	
 	public abstract boolean isReachLimit(LibraryBook t);
@@ -107,7 +105,9 @@ public abstract class Member implements LibraryMember {
 		LibraryBook book = null;
 		ArrayList<LibraryBook> booklist = getBorrowedBooks(); 
 		for(LibraryBook b: booklist) {
-			if(b.getBookNumber() == bookID) book = b;
+			if(bookID.equals(b.getBookNumber())) {
+				book = b;
+			}
 		}
 		return book;
 	}

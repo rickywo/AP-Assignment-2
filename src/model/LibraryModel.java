@@ -15,11 +15,11 @@ public interface LibraryModel
    public LibraryBook getBook(String bookNumber);
 
    // attempts to borrow the Book for the specifried Member
-   public void borrowBook(String memberID, String bookNumber) 
+   public boolean borrowBook(String memberID, String bookNumber) 
                                                 throws LoanException;
 
    // attempts to return the Book for the specified Member
-   public void returnBook(String memberID, 
+   public boolean returnBook(String memberID, 
                           String bookNumber, int daysBorrowed) 
                                                 throws LoanException;
    

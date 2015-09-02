@@ -9,8 +9,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Map.Entry;
 
+/**
+ * @author Ricky Wu
+ *
+ */
 public class BookModel {
 	static final String BOOK = "Book",
 			TEXTBOOK = "Textbook",
@@ -20,25 +23,25 @@ public class BookModel {
 			ITEM = "Item";
 	
 	private static BookModel singleton;
-	private Map<String, LibraryBook> bookMap = new HashMap<>();
-	private Map<String, String> borrowMap = new HashMap<>();
+	private Map<String, LibraryBook> bookMap;
+	private Map<String, String> borrowMap;
 	
 	public static BookModel getSingleton() {
 		if(singleton == null) { singleton = new BookModel();}
 		return singleton;
 	}
+	
 	private BookModel() {
-		// TODO Auto-generated constructor stub
-		// TODO Auto-generated method stub
+		bookMap = new HashMap<>();
+		borrowMap = new HashMap<>();
 		boolean eof = false;
 		Queue<String> blockBuff = new LinkedList<String>();
 		String  thisLine = null;
 		FileReader fread 	= null;
 		BufferedReader br	= null;
 		try{
-			fread = new FileReader("books1.txt");
+			fread = new FileReader("books.txt");
 			br = new BufferedReader(fread);
-			LibraryBook tb;
 			do {
 				// Read each line until reach EOF
 				thisLine = br.readLine();
@@ -47,32 +50,36 @@ public class BookModel {
 					// until meet next "Book" or "Textbook"
 					if(blockBuff.size() > 1 &&
 							(thisLine.equals(TEXTBOOK) || thisLine.equals(BOOK))) {
-						tb = parseBookBlock2Obj(blockBuff);
-						bookMap.put(tb.getBookNumber(), tb);
+						parseBookBlock2Obj(blockBuff);
 					}
 					blockBuff.add(thisLine);
 				} else {
 					// Parse Last element here
-					tb = parseBookBlock2Obj(blockBuff);
-					bookMap.put(tb.getBookNumber(), tb);
+					parseBookBlock2Obj(blockBuff);
 					eof = true;
 				}
 			} while (!eof);
 		} catch (FileNotFoundException e){
-			//e.printStackTrace();
+			Log.e(e.getMessage());
 		} catch (IOException e) {
-			//e.printStackTrace();
+			Log.e(e.getMessage());
 		} finally {
 			try {
 				fread.close();
 				br.close();
 			} catch(IOException e) {
-				//e.printStackTrace();
+				Log.e(e.getMessage());
 			}
 		}
 	}
 	
-	private LibraryBook parseBookBlock2Obj(Queue<String> block) {
+	
+	/**
+	 * Parses a block of book info from input stream to object
+	 * then put it in bookMap, and updates relation map as well
+	 * @param block
+	 */
+	private void parseBookBlock2Obj(Queue<String> block) {
 		LibraryBook b 	= null;
 		String classTypeName = block.remove(), 
 			bookID 	= block.remove(), 
@@ -87,7 +94,7 @@ public class BookModel {
 			try{ 
 				courseCode = block.remove(); 
 			} catch (Exception e){
-				e.printStackTrace();
+				Log.e(e.getMessage());
 				courseCode = null;
 			}
 			b = new Textbook(bookID, title, author, courseCode);
@@ -95,11 +102,19 @@ public class BookModel {
 			b = new Book(bookID, title, author, Integer.parseInt(loanPeriod));	
 		}
 		((Book) b).setAvailability(Boolean.valueOf(availability));
-		return b;
+		
+		// Put book instance into bookMap
+		bookMap.put(b.getBookNumber(), b);
+		// Put book and borrower relation into borrowMap
+		borrowMap.put(b.getBookNumber(), borrower);
 	}
 	
 	public Map<String, LibraryBook> getBookMap() {
 		return bookMap;
+	}
+	
+	public Map<String, String> getBorrowMap() {
+		return borrowMap;
 	}
 	
 	public void save() {
@@ -107,18 +122,15 @@ public class BookModel {
 		try {
 			writer = new FileWriter("books1.txt");
 			for (Map.Entry<String, LibraryBook> entry : bookMap.entrySet()) {
-				//transBooktoString(entry.getValue());
-				//System.out.printf("%s",transBooktoString(entry.getValue()));
 				writer.write(transBooktoString(entry.getValue()));
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(e.getMessage());
 		} finally {
 			try {
 				writer.close();
 			} catch(IOException e) {
-				//e.printStackTrace();
+				Log.e(e.getMessage());
 			}
 		}
 	}

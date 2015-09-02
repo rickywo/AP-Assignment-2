@@ -2,9 +2,9 @@ package test;
 import java.util.Scanner;
 
 import model.LibraryModel;
-import model.LibraryBook;
-import model.LibraryMember;
 import model.LibrarySystem;
+import model.LoanException;
+import model.Log;
 
 public class LibraryTestHarness
 {
@@ -14,11 +14,13 @@ public class LibraryTestHarness
                                    {"Add New Member", 
                                     "Display Member Details",
                                     "Display Item Details",
+                                    "Borrow Book",
+                                    "Return Book",
                                     "Test Item/Member functionality",
                                     "Exit Program"};
    
    private static final String [] options = 
-                                   {"A", "B", "C", "D", "X"};
+                                   {"A", "B", "C", "D", "E", "T", "X"};
    
    
    public static void main(String[] args)
@@ -34,6 +36,7 @@ public class LibraryTestHarness
       
       loadMembers();
       
+      initRelations();
       do
       {
          System.out.println();
@@ -68,8 +71,16 @@ public class LibraryTestHarness
                case 'C':
                   displayBooks();
                   break;
-
+                  
                case 'D':
+            	   borrowBook();
+            	   break;
+            	   
+               case 'E':
+            	   returnBook();
+            	   break;
+
+               case 'T':
                   testFunctionality();
                   break;
 
@@ -114,7 +125,54 @@ public class LibraryTestHarness
    {
       library.displayAllBooks();      
    }
+   
+   public static void borrowBook() {
+	   String memberID, bookID;
+	   System.out.print("Enter member ID :");
+	   memberID = (sc.nextLine()).trim();
+	   System.out.print("Enter book ID :");
+	   bookID = (sc.nextLine()).trim();
+	   try {
+			if(library.borrowBook(memberID, bookID)) {
+				System.out.println("Book borrow succesfully");
+			} else {
+				System.out.println("Book borrow failed");
+			}
+		} catch (LoanException e) {
+			Log.e(e.getMessage());
+		}
+   }
+   
+   public static void returnBook() {
+	   String memberID, bookID;
+	   int day;
+	   System.out.print("Enter member ID :");
+	   memberID = (sc.nextLine()).trim();
+	   System.out.print("Enter book ID :");
+	   bookID = (sc.nextLine()).trim();
+	   System.out.print("Enter holding days :");
+	   day = sc.nextInt();
+	   try {
+			if(library.returnBook(memberID, bookID, day)) {
+				System.out.println("Book return succesfully");
+			} else {
+				System.out.println("Book return failed");
+			}
+		} catch (LoanException e) {
+			Log.e(e.getMessage());
+		}
+   }
 
+   public static void initRelations()
+   {
+      System.out.println("Loading relations...");
+      
+      ((LibrarySystem)library).initRelations();
+      
+      System.out.println();
+      System.out.println("Relations loading complete.");
+      
+   }
    
    public static void loadBooks()
    {

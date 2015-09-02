@@ -1,7 +1,7 @@
 package model;
 
 /**
- * @author leeshihping
+ * @author Ricky Wu
  *
  */
 public class Book implements LibraryBook, Printable {
@@ -54,7 +54,6 @@ public class Book implements LibraryBook, Printable {
 
 	@Override
 	public String getBookNumber() {
-		// TODO Auto-generated method stub
 		return number;
 	}
 	
@@ -68,7 +67,6 @@ public class Book implements LibraryBook, Printable {
 
 	@Override
 	public String getBorrowerID() {
-		// TODO Auto-generated method stub
 		String bID = NULL;
 		if(this.borrower != null) {
 			bID = this.borrower.getMemberID();
@@ -82,13 +80,11 @@ public class Book implements LibraryBook, Printable {
 
 	@Override
 	public boolean isAvailable() {
-		// TODO Auto-generated method stub
 		return availability;
 	}
 
 	@Override
 	public void borrowBook(LibraryMember member) throws BookException {
-		// TODO Auto-generated method stub
 		if(!isAvailable()) {
 			throw new BookException(Error.HAS_BORROWED.toString());
 		} else {
@@ -99,13 +95,11 @@ public class Book implements LibraryBook, Printable {
 
 	@Override
 	public void returnBook() {
-		// TODO Auto-generated method stub
 		setAvailability(true);
 		this.borrower = null;
 	}
 
 	public void setAvailability(boolean b) {
-		// TODO Auto-generated method stub
 		this.availability = b;
 	}
 	
@@ -120,7 +114,6 @@ public class Book implements LibraryBook, Printable {
 	
 	@Override
 	public void print() {
-		// TODO Auto-generated method stub
 		String bookinfo = String.format (
 				"%s: %s\n%s: %s\n%s: %s\n%s: %d %s\n%s: %s\n%s: %s",
 				TITLE, title,

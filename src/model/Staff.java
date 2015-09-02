@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Staff extends Member {
 	
-	static final String MEMBERTYPE = "Member Type:",
+	static final String MEMBERTYPE = "Member Type",
 			STAFF = "Staff",
 			BOOKOVERDUE = "Book Overdue",
 			TRUE = "True",
@@ -17,12 +17,10 @@ public class Staff extends Member {
 	public Staff(String id, String name, String phoneNumber) {
 		super(id, name, phoneNumber);
 		bookOverdue = false;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void borrowBook(LibraryBook b) throws LoanException {
-		// TODO Auto-generated method stub
 		ArrayList<LibraryBook> booklist;
 		booklist = this.getBooklist();
 		if(isBookOverdue()) {
@@ -43,7 +41,6 @@ public class Staff extends Member {
 
 	@Override
 	public void returnBook(String bookNumber, int days) throws LoanException {
-		// TODO Auto-generated method stub
 		ArrayList<LibraryBook> booklist;
 		LibraryBook b = getBookfromBorrowed(bookNumber);
 		booklist = this.getBooklist();
@@ -54,7 +51,6 @@ public class Staff extends Member {
 			booklist.remove(b);
 			if(booklist.size() > 0 && days > b.getLoanPeriod()) {
 				setBookOverdue(true);
-				String err = "Book overdue - all other books must be returned before staff member can borrow!";
 				throw new LoanException(Error.BOOK_OVERDUE.toString());
 			}
 			setBookOverdue(false);
@@ -64,7 +60,6 @@ public class Staff extends Member {
 
 	@Override
 	public void print() {
-		// TODO Auto-generated method stub
 		System.out.printf("%s: %s\n", MEMBERTYPE, STAFF);
 		super.print();
 		System.out.printf("%s: %s\n",BOOKOVERDUE, isBookOverdue()?TRUE:FALSE);

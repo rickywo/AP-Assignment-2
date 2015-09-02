@@ -1,52 +1,87 @@
 package model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 
 public class LibrarySystem implements LibraryModel {
-	static final String BOOK = "Book",
+	static final String STU = "STU",
+			STA = "STA",
+			BOOK = "Book",
 			TEXTBOOK = "Textbook",
 			NULL = "null",
 			ITEM = "Item";
-	static final int PAGE_ITEM_LIMIT = 3;
-	BookModel bookModel = BookModel.getSingleton();;
+	static final int PAGE_ITEM_LIMIT = 3,
+			STUDENT_TYPE_NUM = 1,
+			STAFF_TYPE_NUM = 2;
+	// Models
+	BookModel bookModel;
+	MemberModel memberModel;
+	// Reference of Lists
 	Map<String, LibraryBook> bookMap;
-	Map<String, Member> memberMap = new HashMap<String, Member>();
+	Map<String, Member> memberMap;
+	// Variables
+	Scanner scan = new Scanner(System.in);
+	
+	
 	
 	public LibrarySystem() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean addMember() {
-		// TODO Auto-generated method stub
-		// if(memberMap.containsKey())
-		return false;
+		String id, name, phone;
+		
+		int type; // 1 for Student, 2 for Staff
+		System.out.print("Please Chose a Type (1)Student (2)Staff: ");
+		type = getResponse(2);
+		id = String.format("%s-",(type == 1)?STU:STA);
+		System.out.printf("Enter 3 digits of member ID : %s", id);
+		id += (scan.nextLine()).trim();
+		if (memberMap.containsKey(id)) {
+			System.out.println("Member is exist.");
+			hold();
+			return false;
+		}
+		System.out.print("Please enter a name: ");
+		name = (scan.nextLine()).trim();
+		if(name.length() == 0) {
+			System.out.println("Empty String is entered.");
+			return false;
+		}
+		System.out.print("Please enter a contact phone number: ");
+		phone = (scan.nextLine()).trim();
+		if(phone.length() == 0) {
+			System.out.println("Empty String is entered.");
+			return false;
+		}
+		if(type == STAFF_TYPE_NUM) {
+			memberMap.put(id,new Staff(id, name, phone));
+		} else {
+			memberMap.put(id,new Student(id, name, phone));
+		}
+	    return true;
 	}
 
 	@Override
 	public LibraryMember getMember(String memberID) {
-		// TODO Auto-generated method stub
 		try {
 			return memberMap.get(memberID);
 		} catch (Exception e){
+			Log.e(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public void displayAllMembers() {
-		// TODO Auto-generated method stub
 		printMap(memberMap);
 
 	}
 
 	@Override
 	public LibraryBook getBook(String bookNumber) {
-		// TODO Auto-generated method stub
 		try {
 			return bookMap.get(bookNumber);
 		} catch (Exception e){
@@ -55,73 +90,137 @@ public class LibrarySystem implements LibraryModel {
 	}
 
 	@Override
-	public void borrowBook(String memberID, String bookNumber)
+	public boolean borrowBook(String memberID, String bookNumber)
 			throws LoanException {
-		// TODO Auto-generated method stub
-
+		try	{
+			getMember(memberID).borrowBook(getBook(bookNumber));
+		} catch (LoanException e) {
+			Log.e(e.getMessage());
+			return false;
+		}
+		return true;
 	}
 
 	@Override
-	public void returnBook(String memberID, String bookNumber, int daysBorrowed)
+	public boolean returnBook(String memberID, String bookNumber, int daysBorrowed)
 			throws LoanException {
-		// TODO Auto-generated method stub
-
+		try	{
+			getMember(memberID).returnBook(bookNumber, daysBorrowed);
+		} catch (LoanException e) {
+			Log.e(e.getMessage());
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public void displayAllBooks() {
-		// TODO Auto-generated method stub
 		printMap(bookMap);
 	}
 	
 	@Override
 	public void loadAllBooks() {
+		bookModel = BookModel.getSingleton();
+		// Get books as a Map from BookModel
+		// Raw data without borrowing relation
 		bookMap = bookModel.getBookMap();
 	}
 
 	@Override
 	public void loadAllMembers() {
-		// TODO Auto-generated method stub
-
+		memberModel = MemberModel.getSingleton();
+		// Get members as a Map from MemberModel
+		// Raw data without borrowing relation
+		memberMap = memberModel.getMemberMap();
+	}
+	
+	
+	/** Assign all relations between books and its borrow
+	 *  also make connection between Members and books
+	 *  borrowed. This function must run after loadAllBooks
+	 *  and loadAllMembers.
+	 */
+	public void initRelations() {
+		LibraryBook tb;
+		LibraryMember tm;
+		ArrayList<String> blist;
+		
+		// BookNumer and Borrower's ID Map
+		// <BookNumber, MemberID>
+		Map<String, String> bMap = bookModel.getBorrowMap();
+		// MemberID and a list of BookNumer as Map
+		// <MemberID, ArrayList<BookNumber>>
+		Map<String, ArrayList<String>> eMap = memberModel.getEntitledMap();
+		// Start from book-borrower map
+		for (Map.Entry<String, String> entry : bMap.entrySet()) {
+	    	try{
+	        	tb = getBook(entry.getValue());
+	        	tm = getMember(entry.getKey());
+	        	try {
+					tb.borrowBook(tm);
+				} catch (BookException e) {
+					Log.e(e.getMessage());
+				}
+	        } catch (Exception e) {
+	        	Log.e(e.getMessage());
+	        }
+	    	
+		}
+		for (Map.Entry<String, ArrayList<String>> entry : eMap.entrySet()) {
+	    	try{
+	    		blist = entry.getValue();
+	    		tm = getMember(entry.getKey());
+	    		for(String s: blist) {
+	    			tm.borrowBook(getBook(s));
+	    		}
+	        } catch (Exception e) {
+	        	Log.e(e.getMessage());
+	        }
+	    	
+		}
 	}
 
 	@Override
 	public void saveAllBooks() {
-		// TODO Auto-generated method stub
 		bookModel.save();
 	}
 
 	@Override
 	public void saveAllMembers() {
-		// TODO Auto-generated method stub
-
+		memberModel.save();
 	}
 	
-	private LibraryMember getBorrowerByID(String bID) {
-		return null;
-	}
-	
-	private void debug(String msg) {
-		System.out.printf("[DEBUG] %s\n", msg);
-	}
-	
-	private static void hold() {
-		Scanner scan = new Scanner(System.in);
+	private void hold() {
 		System.out.print("Press enter to continue...");
 		scan.nextLine();
 	}
 	
-	public static <T> void printMap(Map<String, T> mp) {
-		java.util.Iterator<Entry<String, T>> it = mp.entrySet().iterator();
-	    int i = 0, count = 0;
-		while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        try{
+	private int getResponse(int op) {
+		int num = -1;
+		// validate input
+		do {
+			String s;
+			try {
+				s = scan.nextLine();
+				num = Integer.parseInt(s);
+			} catch (NumberFormatException e) {
+				Log.e(e.getMessage());
+				continue;
+			}
+		} while (num < 1 || num >= op + 1);
+		return num;
+	}
+	
+	public <T> void printMap(Map<String, T> mp) {
+		int i = 0, count = 0;
+	    
+	    for (Map.Entry<String, T> entry : mp.entrySet()) {
+	    	try{
 	        	System.out.printf("[ %s %2d]\n", ITEM, count + 1);
-	        	((Printable) pair.getValue()).print();
+	        	((Printable) entry.getValue()).print();
 	        	System.out.println();
 	        } catch (Exception e) {
-	        	//e.printStackTrace();
+	        	Log.e(e.getMessage());
 	        }
 	        count ++ ;
 	        i ++;
