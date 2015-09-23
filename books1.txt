@@ -17,8 +17,8 @@ WOT-001
 The Eye of The World
 Jordan, R.
 14
-false
-STA-002
+true
+null
 Book
 BOU-001
 The Bourne Identity

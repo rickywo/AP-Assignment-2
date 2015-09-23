@@ -251,7 +251,7 @@ public class LibraryTests
       {
          String message = e.getMessage();
          
-         if (message.indexOf("Book limit exceeded") != -1)
+         if (message.indexOf("book limit exceeded") != -1)
          {
             System.out.println("failed - limit incorrect (should be 2)");
          }
@@ -275,7 +275,7 @@ public class LibraryTests
       {
          String message = e.getMessage();
          
-         if (message.indexOf("Book limit exceeded") != -1)
+         if (message.indexOf("book limit exceeded") != -1)
          {
             System.out.println("failed.");
          }
@@ -287,7 +287,7 @@ public class LibraryTests
       }
       
       System.out.println();
-      System.out.print("Exceeding student ReserveBook limit (should fail) - ");
+      System.out.print("Exceeding student Textbook limit (should fail) - ");
       
       createTestData();
       
@@ -298,14 +298,14 @@ public class LibraryTests
          try
          {
             member1.borrowBook(book8);
-            System.out.println("succeeded - reserve limit incorrect (should be 1)");
+            System.out.println("succeeded - Textbook limit incorrect (should be 1)");
             result = false;
          }
          catch (LoanException e)
          {
             String message = e.getMessage();
             
-            if (message.indexOf("ReserveBook limit exceeded") != -1)
+            if (message.indexOf("textbook limit exceeded") != -1)
             {
                System.out.println("failed.");
             }
@@ -321,7 +321,7 @@ public class LibraryTests
       {
          String message = e.getMessage();
          
-         if (message.indexOf("ReserveBook limit exceeded") != -1)
+         if (message.indexOf("book limit exceeded") != -1)
          {
             System.out.println("failed - limit incorrect (should be 1)");
          }
@@ -409,7 +409,7 @@ public class LibraryTests
       } 
       
       System.out.println();
-      System.out.print("Checking ReserveBook fine calculation for student - ");
+      System.out.print("Checking Textbook fine calculation for student - ");
       
       createTestData();
       
@@ -563,7 +563,7 @@ public class LibraryTests
       {
          String message = e.getMessage();
          
-         if (message.indexOf("Staff Book limit exceeded") != -1)
+         if (message.indexOf("Staff book limit exceeded") != -1)
          {
             System.out.println("failed.");
          }
@@ -575,7 +575,7 @@ public class LibraryTests
       }
       
       System.out.println();
-      System.out.print("Checking that there is no limit on ReserveBooks - ");
+      System.out.print("Checking that there is no limit on Textbooks - ");
       
       createTestData();
       

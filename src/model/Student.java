@@ -26,6 +26,8 @@ public class Student extends Member {
 			throw new LoanException(Error.FINES_OWED.toString());
 		} else if(isReachLimit(b)) {
 			throw new LoanException(Error.STUDENT_LIMIT_EXCEEDED.toString());
+		} else if(isTextbookReachLimit(b)) {
+			throw new LoanException(Error.STUDENT_TEXTBOOK_LIMIT_EXCEEDED.toString());
 		} else {
 			// Handling exception of illegally borrowing book 
 			try {
@@ -41,19 +43,29 @@ public class Student extends Member {
 	public void returnBook(String bookNumber, int days) throws LoanException {
 		ArrayList<LibraryBook> booklist;
 		LibraryBook b = getBookfromBorrowed(bookNumber);
+		int overdue_days = days - b.getLoanPeriod();
 		booklist = this.getBooklist();
 		if(b == null) {
 			throw new LoanException(Error.NOT_BORROWED.toString());
 		} else {
 			b.returnBook();
 			booklist.remove(b);
-			if(days > b.getLoanPeriod()) {
+			if(overdue_days > 0) {
+				// Calculate fine for overdue: $5 fine will applied if overdue within a week
+				// ($5: 1-7 days, $10: 8-14 days etc.)
+				
+				double owing;
+				if(b instanceof Textbook) {
+					owing = overdue_days * 2;
+				} else {
+					owing = ((overdue_days / 7)+1) * 5.0;
+				}
+				this.finesOwing = this.finesOwing + owing;
 				String err ;
 				err = String.format (
 						"Book overdue- fine: $%.02f, fines owing: $%.02f", 
-						5.0, this.finesOwing
+						 owing, this.finesOwing
 					);
-				this.finesOwing += 5.0;
 				throw new LoanException(err);
 			}
 		}
@@ -83,23 +95,35 @@ public class Student extends Member {
 		} else {
 			finesOwing -= amount;
 		}
+		print();
 		return change;
 	}
 	
 	public boolean isReachLimit(LibraryBook t) {
 		boolean isReached;
-		int bookCount = 0, textbookCount = 0;
+		int bookCount = 0;
 		ArrayList<LibraryBook> booklist = getBorrowedBooks();
 		bookCount = booklist.size();
+		// count total book borrowed
+		if(bookCount >= BOOKLIMIT) {
+			// Reach the limit of borrowing book
+			isReached = true;
+		} else {
+			isReached = false;
+		}
+		return isReached;
+	}
+	
+	public boolean isTextbookReachLimit(LibraryBook t) {
+		boolean isReached;
+		int textbookCount = 0;
+		ArrayList<LibraryBook> booklist = getBorrowedBooks();
 		// count textbook borrowed
 		for(LibraryBook b: booklist) {
 			if(b instanceof Textbook) textbookCount ++;
 		}
 		// count total book borrowed
-		if(bookCount >= BOOKLIMIT) {
-			// Reach the limit of borrowing book
-			isReached = true;
-		} else if(t instanceof Textbook && textbookCount >= TEXTBOOKLIMIT) {
+		if(t instanceof Textbook && textbookCount >= TEXTBOOKLIMIT) {
 			// Reach the limit of borrowing book if book to be borrowed if Textbook 
 			isReached = true;
 		} else {

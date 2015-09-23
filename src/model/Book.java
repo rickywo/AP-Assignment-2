@@ -114,12 +114,12 @@ public class Book implements LibraryBook, Printable {
 	
 	/* 
 	 * Prints in object in following format
-	 * Member Type: Staff
-	 * ID: STA-002
-	 * Name: William Raffe
-	 * Phone Number: 9455-6677
-	 * Item on loan: WOT-001 
-	 * Book Overdue: False
+	 * Title: 
+	 * Book number: William Raffe
+	 * Author: 9455-6677
+	 * Loan Period: WOT-001 
+	 * Availability: False
+	 * Borrow ID:
 	 */
 	@Override
 	public void print() {

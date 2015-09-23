@@ -191,8 +191,13 @@ public class LibrarySystem implements LibraryModel {
 	}
 	
 	private void hold() {
-		System.out.print("Press enter to continue...");
-		scan.nextLine();
+		try {
+		    //rest of the code
+		    System.out.print("Press enter to continue...");
+			scan.nextLine();
+		}
+		finally {
+		}
 	}
 	
 	private int scanInt(int op) {
