@@ -1,10 +1,15 @@
 package gui;
 
+import model.Book;
+import model.LibraryBook;
 import model.Log;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 public class BrowseBook extends JPanel {
 
@@ -16,8 +21,13 @@ public class BrowseBook extends JPanel {
 	private static final String AUTHOR = "Author";
 	private static final String AVAILABLE = "Available";
 	private static final String BORROWER_ID = "Borrower ID";
+    private static final String YES = "Yes";
+    private static final String NO = "No";
 
     public static final String TAB_TITLE = BROWSE_BOOK;
+
+    // Controller
+    private LibraryController controller;
 
     // Enter Keyword components
     private JLabel enter_keyword_label = new JLabel(ENTER_KEYWORDS);
@@ -58,10 +68,26 @@ public class BrowseBook extends JPanel {
 
         }
     };
+
+    private ListSelectionListener listSelectionListener = new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            JList list = (JList) e.getSource();
+            if (list.getValueIsAdjusting()) {
+                // get Book number from list and pass to controller for getting
+                // book instance
+
+                LibraryBook b = controller.getBookByID(list.getSelectedValue().toString());
+                System.out.println(b.getBookNumber());
+                displayBookDetails(b);
+            }
+        }
+    };
 	/**
 	 * Create the panel.
 	 */
-	public BrowseBook() {
+	public BrowseBook(LibraryController controller) {
+        this.controller = controller;
         initContent();
 	}
 
@@ -69,7 +95,7 @@ public class BrowseBook extends JPanel {
         add(enter_keyword_label);
         add(keyword_textfield);
         add(matching_label);
-        add(matching_list);
+        initBooklist();
         add(book_number_label);
         add(book_number_value);
         add(book_title_label);
@@ -81,6 +107,27 @@ public class BrowseBook extends JPanel {
         add(borrower_id_label);
         add(borrower_id_value);
     }
+
+    private void initBooklist() {
+        add(matching_list);
+        matching_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        matching_list.setListData(controller.getBooksIDArray());
+        matching_list.addListSelectionListener(listSelectionListener);
+    }
+
+    public void showBooklist(ArrayList<Book> books) {
+
+    }
+
+    private void displayBookDetails(LibraryBook book) {
+        Book b = (Book)book;
+        book_number_value.setText(b.getBookNumber());
+        book_title_value.setText(b.getTitle());
+        book_author_value.setText(b.getAuthor());
+        book_availability_value.setText(b.isAvailable() ? YES : NO);
+        borrower_id_value.setText(b.getBorrowerID());
+    }
+
 
 
 }

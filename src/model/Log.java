@@ -4,7 +4,7 @@ public final class Log {
 	static final String DEBUG = "Debug",
 			WARNING = "Warning",
 			ERROR = "Error";
-	static final boolean DEBUG_MODE = false;
+	static final boolean DEBUG_MODE = true;
 	public static void d(String message) {
 		print(String.format("%s %s", bucketUp(DEBUG), message));
 	}

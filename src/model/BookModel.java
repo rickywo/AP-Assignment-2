@@ -101,7 +101,7 @@ public class BookModel {
 		} else {
 			b = new Book(bookID, title, author, Integer.parseInt(loanPeriod));	
 		}
-		((Book) b).setAvailability(Boolean.valueOf(availability));
+		// ((Book) b).setAvailability(Boolean.valueOf(availability));
 		
 		// Put book instance into bookMap
 		bookMap.put(b.getBookNumber(), b);
@@ -123,7 +123,7 @@ public class BookModel {
 	public void save() {
 		FileWriter writer = null;
 		try {
-			writer = new FileWriter("books1.txt");
+			writer = new FileWriter("books.txt");
 			// Loop through objects in the map and write it into file
 			for (Map.Entry<String, LibraryBook> entry : bookMap.entrySet()) {
 				writer.write(transBooktoString(entry.getValue()));

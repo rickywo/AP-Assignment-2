@@ -5,7 +5,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import model.LibraryMember;
 import model.Log;
+import model.Staff;
+import model.Student;
 
 public class RegisterMember extends JPanel{
 
@@ -21,6 +24,9 @@ public class RegisterMember extends JPanel{
 	/**
 	 * Create the panel.
 	 */
+
+    // Controller
+    private LibraryController controller;
 	private JLabel hint_label = new JLabel(REGISTER_MEMBER);
     // Member ID component
     private JLabel id_label = new JLabel(MEMBER_ID);
@@ -42,12 +48,14 @@ public class RegisterMember extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO register new member into library system
+            doRegister();
 			Log.d(REGISTER_MEMBER);
 		}
 		
 	};
 	
-	public RegisterMember() {
+	public RegisterMember(LibraryController controller) {
+        this.controller = controller;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         initContent();
 	}
@@ -65,6 +73,20 @@ public class RegisterMember extends JPanel{
         add(student_radiobutton);
         add(staff_radiobutton);
         add(register_button);
+        register_button.addActionListener(mListener);
+	}
+
+	private void doRegister() {
+        LibraryMember m;
+        String id = id_textfield.getText(),
+                name = name_textfield.getText(),
+                phone = contact_textfield.getText();
+		if(bg.getSelection().equals(staff_radiobutton.getModel())) {
+			m = new Staff(id, name, phone);
+		} else {
+            m = new Student(id, name, phone);
+        }
+        controller.registerMember(m);
 	}
 
 }

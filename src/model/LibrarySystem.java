@@ -19,8 +19,8 @@ public class LibrarySystem implements LibraryModel {
 	BookModel bookModel;
 	MemberModel memberModel;
 	// Reference of Lists
-	Map<String, LibraryBook> bookMap;
-	Map<String, Member> memberMap;
+	public Map<String, LibraryBook> bookMap;
+	public Map<String, Member> memberMap;
 	// Variables
 	Scanner scan = new Scanner(System.in);
 	
@@ -63,6 +63,20 @@ public class LibrarySystem implements LibraryModel {
 		}
 	    return true;
 	}
+
+    public void addMember(LibraryMember member) {
+        if(member instanceof Staff) {
+            memberMap.put(member.getMemberID(),
+                    new Staff(member.getMemberID(),
+                            ((Staff) member).getName(),
+                            ((Staff) member).getPhoneNumber()));
+        } else {
+            memberMap.put(member.getMemberID(),
+                    new Student(member.getMemberID(),
+                            ((Student)member).getName(),
+                            ((Student)member).getPhoneNumber()));
+        }
+    }
 
 	@Override
 	public LibraryMember getMember(String memberID) {
@@ -143,36 +157,15 @@ public class LibrarySystem implements LibraryModel {
 	public void initRelations() {
 		LibraryBook tb;
 		LibraryMember tm;
-		ArrayList<String> blist;
 		
 		// BookNumer and Borrower's ID Map
 		// <BookNumber, MemberID>
 		Map<String, String> bMap = bookModel.getBorrowMap();
-		// MemberID and a list of BookNumer as Map
-		// <MemberID, ArrayList<BookNumber>>
-		Map<String, ArrayList<String>> eMap = memberModel.getEntitledMap();
-		// Start from book-borrower map
 		for (Map.Entry<String, String> entry : bMap.entrySet()) {
 	    	try{
-	        	tb = getBook(entry.getValue());
-	        	tm = getMember(entry.getKey());
-	        	try {
-					tb.borrowBook(tm);
-				} catch (BookException e) {
-					//Log.e(e.getMessage());
-				}
-	        } catch (Exception e) {
-	        	Log.e(e.getMessage());
-	        }
-	    	
-		}
-		for (Map.Entry<String, ArrayList<String>> entry : eMap.entrySet()) {
-	    	try{
-	    		blist = entry.getValue();
-	    		tm = getMember(entry.getKey());
-	    		for(String s: blist) {
-	    			tm.borrowBook(getBook(s));
-	    		}
+	        	tb = getBook(entry.getKey());
+	        	tm = getMember(entry.getValue());
+                tm.borrowBook(tb);
 	        } catch (Exception e) {
 	        	Log.e(e.getMessage());
 	        }
@@ -191,13 +184,8 @@ public class LibrarySystem implements LibraryModel {
 	}
 	
 	private void hold() {
-		try {
-		    //rest of the code
-		    System.out.print("Press enter to continue...");
-			scan.nextLine();
-		}
-		finally {
-		}
+		System.out.print("Press enter to continue...");
+		scan.nextLine();
 	}
 	
 	private int scanInt(int op) {
