@@ -2,7 +2,7 @@ package gui;
 
 import model.*;
 
-import java.awt.EventQueue;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 public class LibraryController extends JFrame {
-    private final static int PANEL_COUNT = 5;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private JPanel panel1; // Register Member
     private JPanel panel2; // Borrow Book
@@ -93,8 +92,12 @@ public class LibraryController extends JFrame {
     }
 
     public void registerMember(LibraryMember member) {
-        library.addMember(member);
-
+        if(library.addMember(member)) {
+            showDialog("New member added to system succesfully");
+        } else {
+            showDialog("Duplicate member ID found - " +
+                    "member not added to system!");
+        }
     }
 
     public static void loadBooks() {
@@ -131,6 +134,19 @@ public class LibraryController extends JFrame {
 
     public String[] getBooksIDArray() {
         String[] bIDs = library.bookMap.keySet().toArray(new String[library.bookMap.size()]);
+        return bIDs;
+    }
+
+    public String[] getBooksIDArrayByMatchingTitle(String str) {
+        ArrayList<LibraryBook> al = new ArrayList<>(library.bookMap.values());
+        ArrayList<String> nl = new ArrayList<>();
+        for(LibraryBook b: al) {
+            if(((Book)b).getTitle().toLowerCase().indexOf(str.toLowerCase()) != -1) {
+                Log.d(((Book)b).getTitle());
+                nl.add(b.getBookNumber());
+            }
+        }
+        String[] bIDs = nl.toArray(new String[nl.size()]);
         return bIDs;
     }
 
@@ -172,7 +188,7 @@ public class LibraryController extends JFrame {
             showDialog(String.format(" - change due: $%.2f\n", change));
             change = 0;
         }
-
+        showDialog("Fines is paid successfully by " + memberID + ".");
         return change;
     }
 
@@ -182,16 +198,39 @@ public class LibraryController extends JFrame {
         {
             result = library.borrowBook(memberID, bookNumber);
 
-            if (result != true)
-                showDialog("Error - member " +  memberID + " not found.");
+            if (result == true)
+                showDialog("Book " + bookNumber +
+                        " borrowed successfully by " + memberID + ".");
+            else
+                showDialog("Error - member " + memberID + " not found.");
         }
         catch (LoanException e)
         {
             showDialog(e.getMessage());
-            System.out.println(e.getMessage());
         }
 
         return result;
+    }
+
+    public boolean returnBook(String memberID, String bookNumber, int days)
+    {
+        boolean result = false;
+        try
+        {
+            result = library.returnBook(memberID, bookNumber, days);
+
+            if (result == true)
+                showDialog("Book " + bookNumber +
+                        " returned successfully by " + memberID + ".");
+            else
+                showDialog("Error - member " + memberID + " not found.");
+        }
+        catch (LoanException e)
+        {
+            showDialog(e.getMessage());
+        }
+        return result;
+
     }
 
     public void showDialog(String msg) {

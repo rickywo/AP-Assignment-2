@@ -5,8 +5,10 @@ import model.LibraryBook;
 import model.Log;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -29,11 +31,16 @@ public class BrowseBook extends JPanel {
     // Controller
     private LibraryController controller;
 
+    private JPanel north = new JPanel();
+    private JPanel center = new JPanel();
+    private JPanel west = new JPanel();
+    private JScrollPane scrollPane = new JScrollPane();
+
     // Enter Keyword components
     private JLabel enter_keyword_label = new JLabel(ENTER_KEYWORDS);
     private JTextField keyword_textfield = new JTextField();
     // Macing book components
-    private JLabel matching_label = new JLabel(MATCHING_BOOKS);
+    private JLabel matching_label = new JLabel(MATCHING_BOOKS, JLabel.LEFT);
     private JList matching_list = new JList();
     // Book number components
     private JLabel book_number_label = new JLabel(BOOK_NUMBER);
@@ -55,7 +62,7 @@ public class BrowseBook extends JPanel {
 
         @Override
         public void keyTyped(KeyEvent e) {
-
+            //matching_list.setListData(controller.getBooksIDArrayByMatchingTitle(keyword_textfield.getText()));
         }
 
         @Override
@@ -65,7 +72,10 @@ public class BrowseBook extends JPanel {
 
         @Override
         public void keyReleased(KeyEvent e) {
-
+            //if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                matching_list.setListData(controller.getBooksIDArrayByMatchingTitle(keyword_textfield.getText()));
+                Log.d(keyword_textfield.getText());
+            //}
         }
     };
 
@@ -88,28 +98,63 @@ public class BrowseBook extends JPanel {
 	 */
 	public BrowseBook(LibraryController controller) {
         this.controller = controller;
+        setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
         initContent();
 	}
 
     private void initContent() {
-        add(enter_keyword_label);
-        add(keyword_textfield);
         add(matching_label);
         initBooklist();
-        add(book_number_label);
-        add(book_number_value);
-        add(book_title_label);
-        add(book_title_value);
-        add(book_author_label);
-        add(book_author_value);
-        add(book_availability_label);
-        add(book_availability_value);
-        add(borrower_id_label);
-        add(borrower_id_value);
+        initNorthView();
+        initWestView();
+        initCenterView();
+        add(north, BorderLayout.PAGE_START);
+        add(west, BorderLayout.LINE_START);
+        add(center, BorderLayout.CENTER);
+
+    }
+
+    private void initNorthView() {
+        north.setLayout(new GridBagLayout());
+        GridBagConstraints bc = new GridBagConstraints();
+        bc.gridx = 0;
+        bc.gridy = 0;
+        bc.gridwidth =1;
+        bc.gridheight =1;
+        north.add(enter_keyword_label, bc);
+        bc.gridx = 1;
+        bc.gridy = 0;
+        bc.gridwidth =3;
+        bc.gridheight =1;
+        bc.fill = GridBagConstraints.HORIZONTAL;
+        bc.weightx = 1;
+        north.add(keyword_textfield, bc);
+        keyword_textfield.addKeyListener(mKeyListener);
+    }
+
+    private void initWestView() {
+        west.setLayout(new BoxLayout(west , BoxLayout.Y_AXIS));
+        west.add(matching_label);
+        west.add(scrollPane);
+    }
+
+    private void initCenterView() {
+        center.setLayout(new GridLayout(0, 2, 10, 10));
+        center.add(book_number_label);
+        center.add(book_number_value);
+        center.add(book_title_label);
+        center.add(book_title_value);
+        center.add(book_author_label);
+        center.add(book_author_value);
+        center.add(book_availability_label);
+        center.add(book_availability_value);
+        center.add(borrower_id_label);
+        center.add(borrower_id_value);
     }
 
     private void initBooklist() {
-        add(matching_list);
+        scrollPane.setViewportView(matching_list);
         matching_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         matching_list.setListData(controller.getBooksIDArray());
         matching_list.addListSelectionListener(listSelectionListener);
@@ -128,6 +173,8 @@ public class BrowseBook extends JPanel {
         borrower_id_value.setText(b.getBorrowerID());
     }
 
-
+    public void showDialog(String msg) {
+        JOptionPane.showMessageDialog(this, msg);
+    }
 
 }

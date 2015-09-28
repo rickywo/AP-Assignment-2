@@ -1,9 +1,13 @@
 package gui;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import model.LibraryMember;
 import model.Log;
@@ -27,7 +31,10 @@ public class RegisterMember extends JPanel{
 
     // Controller
     private LibraryController controller;
-	private JLabel hint_label = new JLabel(REGISTER_MEMBER);
+    private JPanel north = new JPanel();
+    private JPanel center = new JPanel();
+    private JPanel south = new JPanel();
+	private JLabel hint_label = new JLabel(HINT_MESSAGE);
     // Member ID component
     private JLabel id_label = new JLabel(MEMBER_ID);
 	private JTextField id_textfield = new JTextField();
@@ -53,28 +60,86 @@ public class RegisterMember extends JPanel{
 		}
 		
 	};
+
+    private ActionListener selectionListener = new ActionListener (){
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // TODO check all input field is filled
+            register_button.setEnabled(validateInputs());
+        }
+
+    };
+
+    private KeyListener mKeyListener = new KeyListener() {
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            register_button.setEnabled(validateInputs());
+            Log.d(Boolean.toString(validateInputs()));
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
+    };
 	
 	public RegisterMember(LibraryController controller) {
         this.controller = controller;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout(10, 0));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
         initContent();
 	}
 	
 	private void initContent() {
-		bg.add(staff_radiobutton);
-		bg.add(student_radiobutton);
-        add(hint_label);
-        add(id_label);
-        add(id_textfield);
-        add(name_label);
-        add(name_textfield);
-        add(contact_label);
-        add(contact_textfield);
-        add(student_radiobutton);
-        add(staff_radiobutton);
-        add(register_button);
-        register_button.addActionListener(mListener);
+
+        initNorthView();
+        initCenterView();
+        initSouthView();
+        add(north, BorderLayout.PAGE_START);
+        add(center, BorderLayout.CENTER);
+        add(south, BorderLayout.PAGE_END);
 	}
+
+    private void initNorthView() {
+        north.add(hint_label);
+    }
+
+    private void initCenterView() {
+        center.setLayout(new GridLayout(0, 2, 10, 0));
+        // ID components
+        center.add(id_label);
+        center.add(id_textfield);
+        id_textfield.addKeyListener(mKeyListener);
+        // Name components
+        center.add(name_label);
+        center.add(name_textfield);
+        name_textfield.addKeyListener(mKeyListener);
+        // Contact components
+        center.add(contact_label);
+        center.add(contact_textfield);
+        contact_textfield.addKeyListener(mKeyListener);
+        // Button group with 2 radio buttons
+        bg.add(staff_radiobutton);
+        bg.add(student_radiobutton);
+        center.add(student_radiobutton);
+        student_radiobutton.addActionListener(selectionListener);
+        center.add(staff_radiobutton);
+        staff_radiobutton.addActionListener(selectionListener);
+
+    }
+
+    private void initSouthView() {
+        south.add(register_button);
+        register_button.setEnabled(false);
+        register_button.addActionListener(mListener);
+    }
 
 	private void doRegister() {
         LibraryMember m;
@@ -89,4 +154,17 @@ public class RegisterMember extends JPanel{
         controller.registerMember(m);
 	}
 
+    public void showDialog(String msg) {
+        JOptionPane.showMessageDialog(this, msg);
+    }
+
+    private boolean validateInputs() {
+        if(id_textfield.getText().isEmpty() ||
+                name_textfield.getText().isEmpty() ||
+                contact_textfield.getText().isEmpty() ||
+                bg.getSelection() == null)
+            return false;
+        else
+            return true;
+    }
 }

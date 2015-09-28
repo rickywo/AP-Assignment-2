@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -64,7 +63,10 @@ public class LibrarySystem implements LibraryModel {
 	    return true;
 	}
 
-    public void addMember(LibraryMember member) {
+    public boolean addMember(LibraryMember member) {
+		if (memberMap.containsKey(member.getMemberID())) {
+			return false;
+		}
         if(member instanceof Staff) {
             memberMap.put(member.getMemberID(),
                     new Staff(member.getMemberID(),
@@ -76,6 +78,7 @@ public class LibrarySystem implements LibraryModel {
                             ((Student)member).getName(),
                             ((Student)member).getPhoneNumber()));
         }
+        return true;
     }
 
 	@Override
@@ -108,9 +111,10 @@ public class LibrarySystem implements LibraryModel {
 			throws LoanException {
 		try	{
 			getMember(memberID).borrowBook(getBook(bookNumber));
-		} catch (LoanException e) {
-			Log.e(e.getMessage());
+		} catch (NullPointerException e) {
 			return false;
+		}catch (LoanException e) {
+			throw new LoanException(e.getMessage());
 		}
 		return true;
 	}
@@ -120,9 +124,10 @@ public class LibrarySystem implements LibraryModel {
 			throws LoanException {
 		try	{
 			getMember(memberID).returnBook(bookNumber, daysBorrowed);
-		} catch (LoanException e) {
-			Log.e(e.getMessage());
+		} catch (NullPointerException e) {
 			return false;
+		} catch (LoanException e) {
+			throw new LoanException(e.getMessage());
 		}
 		return true;
 	}

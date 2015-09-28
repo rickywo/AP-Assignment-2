@@ -4,8 +4,10 @@ import model.LibraryMember;
 import model.Student;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,9 +25,12 @@ public class PayFine extends JPanel {
     // Controller
     private LibraryController controller;
     // private variables
+    private JPanel west = new JPanel();
+    private JPanel center = new JPanel();
+    private JScrollPane scrollPane = new JScrollPane();
 
     private JList member_list = new JList();
-    private JLabel select_member_label = new JLabel(SELECT_MEMBER);
+    private JLabel select_member_label = new JLabel(SELECT_MEMBER, JLabel.LEFT);
     // Member ID components
     private JLabel member_id_label = new JLabel(MEMBER_ID);
     private JLabel member_id_value = new JLabel();
@@ -45,8 +50,13 @@ public class PayFine extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             // TODO register new member into library system
-            controller.payFine(member_list.getSelectedValue().toString(),
-                    Double.parseDouble(amount_paid_textfield.getText()));
+            try {
+                controller.payFine(member_list.getSelectedValue().toString(),
+                        Double.parseDouble(amount_paid_textfield.getText()));
+            } catch (NumberFormatException ne) {
+                showDialog("Input format error, please check \"" +AMOUNT_PAID+"\" entered.");
+            }
+            displayMemberDetails();
         }
 
     };
@@ -54,14 +64,10 @@ public class PayFine extends JPanel {
     private ListSelectionListener listSelectionListener = new ListSelectionListener() {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            JList list = (JList) e.getSource();
-            if (list.getValueIsAdjusting()) {
+            if (member_list.getValueIsAdjusting()) {
                 // get Book number from list and pass to controller for getting
                 // book instance
-
-                LibraryMember m = controller.getMemberByID(list.getSelectedValue().toString());
-                System.out.println(m.getMemberID());
-                displayMemberDetails(m);
+                displayMemberDetails();
                 pay_button.setEnabled(true);
             }
         }
@@ -72,42 +78,63 @@ public class PayFine extends JPanel {
      */
     public PayFine(LibraryController controller) {
         this.controller = controller;
+        setLayout(new BorderLayout(10, 0));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
         initContent();
     }
 
-    private void displayMemberDetails(LibraryMember member) {
-        Student s = (Student) member;
+    private void displayMemberDetails() {
+        LibraryMember m = controller.getMemberByID(member_list.getSelectedValue().toString());
+        Student s = (Student) m;
         member_id_value.setText(s.getMemberID());
         member_name_value.setText(s.getName());
         fines_owing_value.setText(String.valueOf(s.getFinesOwing()));
     }
 
     public void initContent() {
-        add(select_member_label);
         initMemberlist();
-        add(member_id_label);
-        add(member_id_value);
-        add(member_name_label);
-        add(member_name_value);
-        add(fines_owing_label);
-        add(fines_owing_value);
-        add(amount_paid_label);
-        add(amount_paid_textfield);
-        initButton();
+        initWestView();
+        initCenterView();
+        add(west, BorderLayout.LINE_START);
+        add(center, BorderLayout.CENTER);
+    }
 
+    private void initWestView() {
+        west.setLayout(new BoxLayout(west, BoxLayout.Y_AXIS));
+        west.add(select_member_label);
+        west.add(scrollPane);
+    }
+
+    private void initCenterView() {
+        center.setLayout(new GridLayout(0, 2, 10, 0));
+        // Member ID components
+        center.add(member_id_label);
+        center.add(member_id_value);
+        // Member name components
+        center.add(member_name_label);
+        center.add(member_name_value);
+        // Fines owing components
+        center.add(fines_owing_label);
+        center.add(fines_owing_value);
+        // Amount paid components
+        center.add(amount_paid_label);
+        center.add(amount_paid_textfield);
+        center.add(new JPanel()); // Dummy item
+        // Pay button
+        center.add(pay_button);
+        pay_button.setEnabled(false);
+        pay_button.addActionListener(mListener);
     }
 
 
     private void initMemberlist() {
-        add(member_list);
+        scrollPane.setViewportView(member_list);
         member_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         member_list.setListData(controller.getStudentsIDArray());
         member_list.addListSelectionListener(listSelectionListener);
     }
 
-    private void initButton() {
-        add(pay_button);
-        pay_button.setEnabled(false);
-        pay_button.addActionListener(mListener);
+    public void showDialog(String msg) {
+        JOptionPane.showMessageDialog(this, msg);
     }
 }
