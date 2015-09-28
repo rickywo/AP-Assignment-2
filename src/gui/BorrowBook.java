@@ -131,18 +131,24 @@ public class BorrowBook extends JPanel {
 
     private void initCenterView() {
         center.setLayout(new GridLayout(0, 2, 10, 0));
+        // Book number components
         center.add(book_number_label);
         center.add(book_number_value);
+        // Book title components
         center.add(book_title_label);
         center.add(book_title_value);
+        // Book author components
         center.add(book_author_label);
         center.add(book_author_value);
+        // Book availability components
         center.add(book_availability_label);
         center.add(book_availability_value);
+        // Member ID components
         center.add(member_id_label);
         center.add(member_id_textfield);
         member_id_textfield.addKeyListener(mKeyListener);
         center.add(new JPanel()); // Dummy placeholder
+        // Borrow button
         center.add(borrow_button);
         borrow_button.setEnabled(false);
         borrow_button.addActionListener(mListener);

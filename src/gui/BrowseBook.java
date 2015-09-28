@@ -141,14 +141,19 @@ public class BrowseBook extends JPanel {
 
     private void initCenterView() {
         center.setLayout(new GridLayout(0, 2, 10, 10));
+        // Book number components
         center.add(book_number_label);
         center.add(book_number_value);
+        // Book title components
         center.add(book_title_label);
         center.add(book_title_value);
+        // Book author components
         center.add(book_author_label);
         center.add(book_author_value);
+        // Book availability components
         center.add(book_availability_label);
         center.add(book_availability_value);
+        // Borrow ID components
         center.add(borrower_id_label);
         center.add(borrower_id_value);
     }
@@ -158,10 +163,6 @@ public class BrowseBook extends JPanel {
         matching_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         matching_list.setListData(controller.getBooksIDArray());
         matching_list.addListSelectionListener(listSelectionListener);
-    }
-
-    public void showBooklist(ArrayList<Book> books) {
-
     }
 
     private void displayBookDetails(LibraryBook book) {
