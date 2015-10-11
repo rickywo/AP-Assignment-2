@@ -11,7 +11,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ReturnBook extends JPanel {
+public class ReturnBook extends JPanel implements ListViewPanel{
 	private static final String RETURN_BOOK = "Return Book";
 	private static final String SELECT_BOOK = "Select Book";
 	private static final String BOOK_NUMBER = "Book Number";
@@ -122,7 +122,6 @@ public class ReturnBook extends JPanel {
         scrollPane.setViewportView(book_list);
         //add(scrollPane);
         book_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        book_list.setListData(controller.getBooksIDArray());
         book_list.addListSelectionListener(listSelectionListener);
     }
 
@@ -180,5 +179,9 @@ public class ReturnBook extends JPanel {
             return false;
         else
             return true;
+    }
+
+    public void loadData() {
+        book_list.setListData(controller.getBooksIDArray());
     }
 }

@@ -8,9 +8,12 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class LibraryController extends JFrame {
     private JTabbedPane tabbedPane = new JTabbedPane();
+    private JMenuBar menuBar;
     private JPanel panel1; // Register Member
     private JPanel panel2; // Borrow Book
     private JPanel panel3; // Return Book
@@ -19,18 +22,6 @@ public class LibraryController extends JFrame {
 
     // Models
     private static final LibrarySystem library = new LibrarySystem();
-
-    // Listeners
-
-    private WindowAdapter mListener = new WindowAdapter() {
-
-        @Override
-        public void windowClosing(WindowEvent we) {
-            // TODO save all data into nonvolatile storage before close window
-            exitLibrarySystem();
-            System.exit(0);
-        }
-    };
 
     /**
      * Launch the application.
@@ -52,18 +43,20 @@ public class LibraryController extends JFrame {
      * Create the frame.
      */
     public LibraryController() {
-        setBounds(100, 100, 450, 300);
+        setBounds(100, 100, 600, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Load all data from file into model
-        initLibrarySystem();
+        // initLibrarySystem();
         // Initialize all panels
         initTabs();
         getContentPane().add(tabbedPane);
-        addWindowListener(mListener);
+        //addWindowListener(mListener);
     }
 
 
     private void initTabs() {
+        menuBar = new SystemMenu(this);
+        setJMenuBar(menuBar);
         panel1 = new RegisterMember(this); // Register Member
         panel2 = new BorrowBook(this); // Borrow Book
         panel3 = new ReturnBook(this); // Return Book
@@ -74,10 +67,19 @@ public class LibraryController extends JFrame {
         tabbedPane.add(ReturnBook.TAB_TITLE, panel3);
         tabbedPane.add(PayFine.TAB_TITLE, panel4);
         tabbedPane.add(BrowseBook.TAB_TITLE, panel5);
+        tabbedPane.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (e.getSource() instanceof JTabbedPane) {
+                    loadListData();
+                }
+            }
+        });
 
     }
 
-    private void initLibrarySystem() {
+    public static void load() {
         loadBooks();
         loadMembers();
         initRelations();
@@ -85,10 +87,17 @@ public class LibraryController extends JFrame {
 
     }
 
-    private void exitLibrarySystem() {
+    public static void save() {
         saveBooks();
         saveMembers();
         //library.displayAllMembers();
+    }
+
+    public void loadListData() {
+        ((ListViewPanel) panel2).loadData();
+        ((ListViewPanel) panel3).loadData();
+        ((ListViewPanel) panel4).loadData();
+        ((ListViewPanel) panel5).loadData();
     }
 
     public void registerMember(LibraryMember member) {
@@ -133,21 +142,29 @@ public class LibraryController extends JFrame {
     }
 
     public String[] getBooksIDArray() {
-        String[] bIDs = library.bookMap.keySet().toArray(new String[library.bookMap.size()]);
-        return bIDs;
+        try {
+            String[] bIDs = library.bookMap.keySet().toArray(new String[library.bookMap.size()]);
+            return bIDs;
+        } catch (NullPointerException ne) {
+            return new String[0];
+        }
     }
 
     public String[] getBooksIDArrayByMatchingTitle(String str) {
-        ArrayList<LibraryBook> al = new ArrayList<>(library.bookMap.values());
-        ArrayList<String> nl = new ArrayList<>();
-        for(LibraryBook b: al) {
-            if(((Book)b).getTitle().toLowerCase().indexOf(str.toLowerCase()) != -1) {
-                Log.d(((Book)b).getTitle());
-                nl.add(b.getBookNumber());
+        try {
+            ArrayList<LibraryBook> al = new ArrayList<>(library.bookMap.values());
+            ArrayList<String> nl = new ArrayList<>();
+            for (LibraryBook b : al) {
+                if (((Book) b).getTitle().toLowerCase().indexOf(str.toLowerCase()) != -1) {
+                    Log.d(((Book) b).getTitle());
+                    nl.add(b.getBookNumber());
+                }
             }
+            String[] bIDs = nl.toArray(new String[nl.size()]);
+            return bIDs;
+        } catch (NullPointerException ne) {
+            return new String[0];
         }
-        String[] bIDs = nl.toArray(new String[nl.size()]);
-        return bIDs;
     }
 
     public String[] getMembersIDArray() {
@@ -158,13 +175,18 @@ public class LibraryController extends JFrame {
     public String[] getStudentsIDArray() {
         String[] mIDs;
         ArrayList<String> c = new ArrayList<>();
-        for(LibraryMember lm: library.memberMap.values()) {
-            if(lm instanceof Student) {
-                c.add(lm.getMemberID());
+        try {
+            for (LibraryMember lm : library.memberMap.values()) {
+                if (lm instanceof Student) {
+                    c.add(lm.getMemberID());
+                }
             }
+            mIDs = c.toArray(new String[c.size()]);
+            return mIDs;
+        } catch (NullPointerException ne) {
+            return new String[0];
         }
-        mIDs = c.toArray(new String[c.size()]);
-        return mIDs;
+
     }
 
     public LibraryBook getBookByID(String id) {

@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PayFine extends JPanel {
+public class PayFine extends JPanel implements ListViewPanel {
 
     private static final String PAY_FINE = "Pay Fine";
     private static final String MEMBER_ID = "Member ID";
@@ -130,11 +130,16 @@ public class PayFine extends JPanel {
     private void initMemberlist() {
         scrollPane.setViewportView(member_list);
         member_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        member_list.setListData(controller.getStudentsIDArray());
         member_list.addListSelectionListener(listSelectionListener);
     }
 
     public void showDialog(String msg) {
         JOptionPane.showMessageDialog(this, msg);
     }
+
+    public void loadData() {
+        member_list.setListData(controller.getStudentsIDArray());
+    }
+
+
 }

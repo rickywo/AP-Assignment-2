@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class BorrowBook extends JPanel {
+public class BorrowBook extends JPanel implements ListViewPanel {
 
 	private static final String BORROW_BOOK = "Borrow Book";
 	private static final String SELECT_BOOK = "Select Book";
@@ -119,7 +119,6 @@ public class BorrowBook extends JPanel {
         scrollPane.setViewportView(book_list);
         //add(scrollPane);
         book_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        book_list.setListData(controller.getBooksIDArray());
         book_list.addListSelectionListener(listSelectionListener);
     }
 
@@ -172,6 +171,10 @@ public class BorrowBook extends JPanel {
             return false;
         else
             return true;
+    }
+
+    public void loadData() {
+        book_list.setListData(controller.getBooksIDArray());
     }
 
 }

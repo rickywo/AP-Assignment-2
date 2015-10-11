@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class BrowseBook extends JPanel {
+public class BrowseBook extends JPanel implements ListViewPanel {
 
 	private static final String BROWSE_BOOK = "Browse Books";
 	private static final String ENTER_KEYWORDS = "Enter keyword(s)";
@@ -161,7 +161,6 @@ public class BrowseBook extends JPanel {
     private void initBooklist() {
         scrollPane.setViewportView(matching_list);
         matching_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        matching_list.setListData(controller.getBooksIDArray());
         matching_list.addListSelectionListener(listSelectionListener);
     }
 
@@ -176,6 +175,10 @@ public class BrowseBook extends JPanel {
 
     public void showDialog(String msg) {
         JOptionPane.showMessageDialog(this, msg);
+    }
+
+    public void loadData() {
+        matching_list.setListData(controller.getBooksIDArray());
     }
 
 }

@@ -4,7 +4,7 @@ The Girl Who Played with Fire
 Larsen, S.
 2
 false
-STU-004
+STU-001
 Book
 MIL-001
 The Girl with the Dragon Tattoo
